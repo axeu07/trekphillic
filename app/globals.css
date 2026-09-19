@@ -1,26 +1,491 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f8f4;
+  --foreground: #18332d;
+  --surface: #ffffff;
+  --surface-muted: #edf2ed;
+  --forest: #17483d;
+  --forest-deep: #0f302a;
+  --teal: #2d7180;
+  --sage: #a9c4b1;
+  --sunrise: #d98d4c;
+  --border: #d8e2da;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-forest: var(--forest);
+  --color-forest-deep: var(--forest-deep);
+  --color-teal: var(--teal);
+  --color-sage: var(--sage);
+  --color-sunrise: var(--sunrise);
+  --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-poppins: var(--font-poppins);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), sans-serif;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: var(--sage);
+  color: var(--forest-deep);
+}
+
+:focus-visible {
+  outline: 3px solid var(--sunrise);
+  outline-offset: 3px;
+}
+
+.hero-section {
+  background: linear-gradient(115deg, #0f302a 0%, #17483d 58%, #2d7180 100%);
+}
+
+.hero-grid {
+  min-height: inherit;
+}
+
+.hero-image-layer,
+.hero-overlay {
+  inset: 0;
+  position: absolute;
+}
+
+.hero-overlay {
+  background: linear-gradient(90deg, rgba(10, 42, 37, 0.9) 0%, rgba(15, 48, 42, 0.64) 48%, rgba(15, 48, 42, 0.2) 100%), linear-gradient(0deg, rgba(10, 42, 37, 0.34), transparent 48%);
+  pointer-events: none;
+}
+
+.hero-section a[href="/treks"] {
+  background-color: transparent;
+  border: 1px solid rgb(255 255 255 / 60%);
+  color: white;
+}
+
+.hero-section a[href="/treks"]:hover {
+  background-color: rgb(255 255 255 / 10%);
+}
+
+.trek-listing-page {
+  background: linear-gradient(rgb(247 248 244 / 0.78), rgb(247 248 244 / 0.78)), url("/images/backgrounds/section-background-mountains.png") center top / cover no-repeat;
+}
+
+.trek-listing-image {
+  aspect-ratio: 1.55;
+  overflow: hidden;
+  position: relative;
+}
+
+.trek-listing-image .trek-placeholder {
+  border-radius: 0;
+  height: 100%;
+}
+
+.trek-discovery-panel input[type="search"]::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+.main-content-background {
+  background-color: var(--background);
+  background-image: linear-gradient(rgb(247 248 244 / 0.24), rgb(247 248 244 / 0.24)), url("/images/backgrounds/section-background-mountains.png");
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.main-content-background > .bg-surface-muted {
+  background-color: rgb(237 242 237 / 0.34);
+}
+
+.main-content-background > .bg-forest {
+  background-color: rgb(23 72 61 / 0.88);
+}
+
+.main-content-background > section {
+  border-color: transparent;
+  position: relative;
+}
+
+.main-content-background > section + section::before {
+  background: rgb(247 248 244 / 0.82);
+  clip-path: polygon(0 28%, 3% 44%, 7% 23%, 11% 48%, 16% 31%, 21% 52%, 27% 27%, 33% 45%, 39% 24%, 45% 50%, 51% 30%, 57% 46%, 63% 22%, 69% 49%, 75% 29%, 81% 45%, 87% 25%, 93% 47%, 100% 27%, 100% 68%, 96% 58%, 91% 75%, 85% 61%, 79% 78%, 73% 60%, 67% 73%, 61% 57%, 55% 76%, 49% 61%, 43% 79%, 37% 59%, 31% 74%, 25% 56%, 19% 76%, 13% 60%, 7% 72%, 0 57%);
+  content: "";
+  height: 1.75rem;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: -0.85rem;
+  z-index: 1;
+}
+
+.trek-placeholder {
+  align-items: flex-end;
+  aspect-ratio: 1.25;
+  background: var(--surface-muted);
+  border-radius: 1.25rem;
+  color: var(--forest);
+  display: flex;
+  font-size: 0.75rem;
+  font-weight: 700;
+  justify-content: flex-end;
+  overflow: hidden;
+  padding: 0.9rem;
+  position: relative;
+}
+
+.trek-card-media {
+  aspect-ratio: 1.6;
+  overflow: hidden;
+  position: relative;
+}
+
+.trek-placeholder::before,
+.trek-placeholder::after {
+  background: var(--sage);
+  clip-path: polygon(0 100%, 48% 22%, 100% 100%);
+  content: "";
+  height: 80%;
+  left: -8%;
+  position: absolute;
+  top: 20%;
+  width: 78%;
+}
+
+.trek-placeholder::after {
+  background: var(--teal);
+  left: 33%;
+  opacity: 0.75;
+  top: 34%;
+}
+
+.trek-placeholder-2 { background: #e8eee7; }
+.trek-placeholder-3 { background: #e2eeeb; }
+.trek-placeholder-4 { background: #eef0e5; }
+
+.trek-card-media .trek-placeholder {
+  border-radius: 0;
+  height: 100%;
+}
+
+.experience-card-visual {
+  aspect-ratio: 1.5;
+  background: #dce9e4;
+  overflow: hidden;
+  position: relative;
+  transition: transform 500ms ease;
+}
+
+.experience-card-visual::before,
+.experience-card-visual::after {
+  background: #7fa995;
+  clip-path: polygon(0 100%, 42% 24%, 67% 57%, 100% 0, 100% 100%);
+  content: "";
+  inset: 18% -6% 0;
+  position: absolute;
+}
+
+.experience-card-visual::after {
+  background: #43818b;
+  clip-path: polygon(0 100%, 29% 43%, 53% 69%, 82% 17%, 100% 55%, 100% 100%);
+  inset: 34% -4% 0 25%;
+  opacity: 0.82;
+}
+
+.experience-card-visual-forest { background: #dce9e4; }
+.experience-card-visual-meadow { background: #e8eee0; }
+.experience-card-visual-meadow::before { background: #a9bd91; }
+.experience-card-visual-meadow::after { background: #6b9b82; }
+.experience-card-visual-winter { background: #e1edf1; }
+.experience-card-visual-winter::before { background: #b9d0d8; }
+.experience-card-visual-winter::after { background: #6b9eab; }
+.experience-card-visual-altitude { background: #dce6ed; }
+.experience-card-visual-altitude::before { background: #7895a5; }
+.experience-card-visual-altitude::after { background: #326a78; }
+.experience-card-visual-road { background: #e8e7d9; }
+.experience-card-visual-road::before { background: #a6ae83; }
+.experience-card-visual-road::after { background: #668a78; }
+.experience-card-visual-group { background: #e3ece6; }
+.experience-card-visual-group::before { background: #91ae9a; }
+.experience-card-visual-group::after { background: #4d8180; }
+
+.group:hover .experience-card-visual {
+  transform: scale(1.04);
+}
+
+.tour-card-visual {
+  aspect-ratio: 1.6;
+  background: #dce9e4;
+  overflow: hidden;
+  position: relative;
+  transition: transform 500ms ease;
+}
+
+.tour-card-visual::before,
+.tour-card-visual::after {
+  background: #83a996;
+  clip-path: polygon(0 100%, 33% 38%, 56% 64%, 81% 5%, 100% 45%, 100% 100%);
+  content: "";
+  inset: 16% -5% 0;
+  position: absolute;
+}
+
+.tour-card-visual::after {
+  background: #3f7d86;
+  clip-path: polygon(0 100%, 31% 47%, 52% 68%, 78% 18%, 100% 55%, 100% 100%);
+  inset: 36% -4% 0 28%;
+  opacity: 0.8;
+}
+
+.tour-card-visual-uttarakhand { background: #dcebe4; }
+.tour-card-visual-uttarakhand::before { background: #8db39c; }
+.tour-card-visual-uttarakhand::after { background: #367b7f; }
+.tour-card-visual-himachal { background: #e4ebdf; }
+.tour-card-visual-himachal::before { background: #a2b794; }
+.tour-card-visual-himachal::after { background: #628d79; }
+.tour-card-visual-custom { background: #dce8ed; }
+.tour-card-visual-custom::before { background: #86a8b2; }
+.tour-card-visual-custom::after { background: #356e7c; }
+
+.group:hover .tour-card-visual {
+  transform: scale(1.04);
+}
+
+.vehicle-card-visual {
+  aspect-ratio: 1.55;
+  background: #dce9e4;
+  overflow: hidden;
+  position: relative;
+  transition: transform 500ms ease;
+}
+
+.vehicle-card-visual::before,
+.vehicle-card-visual::after {
+  background: #8daf9d;
+  clip-path: polygon(0 100%, 28% 46%, 52% 68%, 78% 17%, 100% 52%, 100% 100%);
+  content: "";
+  inset: 20% -5% 0;
+  position: absolute;
+}
+
+.vehicle-card-visual::after {
+  background: #397b83;
+  clip-path: polygon(0 100%, 37% 48%, 59% 70%, 83% 24%, 100% 56%, 100% 100%);
+  inset: 40% -4% 0 26%;
+  opacity: 0.82;
+}
+
+.vehicle-card-visual-sedan { background: #e2ece7; }
+.vehicle-card-visual-sedan::before { background: #91b29f; }
+.vehicle-card-visual-sedan::after { background: #367d82; }
+.vehicle-card-visual-suv { background: #e8ebdf; }
+.vehicle-card-visual-suv::before { background: #a5b98f; }
+.vehicle-card-visual-suv::after { background: #668f7c; }
+.vehicle-card-visual-tempo { background: #dfeaf0; }
+.vehicle-card-visual-tempo::before { background: #8baab7; }
+.vehicle-card-visual-tempo::after { background: #397889; }
+.vehicle-card-visual-bus { background: #e5e9dd; }
+.vehicle-card-visual-bus::before { background: #9eaf8a; }
+.vehicle-card-visual-bus::after { background: #527f78; }
+
+.group:hover .vehicle-card-visual {
+  transform: scale(1.04);
+}
+
+.traveller-stories-visual {
+  aspect-ratio: 1.25;
+  background: #dce9ed;
+  border: 1px solid rgb(255 255 255 / 65%);
+  border-radius: 1.5rem;
+  box-shadow: 0 12px 30px rgb(15 48 42 / 8%);
+  overflow: hidden;
+  position: relative;
+}
+
+.traveller-stories-visual::before,
+.traveller-stories-visual::after {
+  background: #91b4b8;
+  clip-path: polygon(0 100%, 36% 32%, 58% 60%, 82% 10%, 100% 45%, 100% 100%);
+  content: "";
+  inset: 25% -5% 0;
+  position: absolute;
+}
+
+.traveller-stories-visual::after {
+  background: #367d82;
+  clip-path: polygon(0 100%, 31% 48%, 53% 68%, 80% 22%, 100% 57%, 100% 100%);
+  inset: 42% -4% 0 26%;
+  opacity: 0.82;
+}
+
+.traveller-stories-sun {
+  background: #d98d4c;
+  border-radius: 999px;
+  height: 3.5rem;
+  position: absolute;
+  right: 14%;
+  top: 14%;
+  width: 3.5rem;
+}
+
+.traveller-stories-route {
+  border: 2px solid rgb(255 255 255 / 75%);
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0;
+  bottom: 9%;
+  height: 24%;
+  left: 12%;
+  position: absolute;
+  transform: rotate(-12deg);
+  width: 34%;
+}
+
+.traveller-stories-visual-label {
+  bottom: 1.25rem;
+  color: white;
+  font-family: var(--font-poppins), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  left: 1.25rem;
+  letter-spacing: 0.08em;
+  position: absolute;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+@media (max-width: 767px) {
+  .experience-grid,
+  .tour-packages-grid,
+  .vehicle-grid {
+    display: flex;
+    gap: 1rem;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding: 0.5rem 0.5rem 1rem;
+    perspective: 1000px;
+    scroll-padding-inline: 1rem;
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+  }
+
+  .experience-grid::-webkit-scrollbar,
+  .tour-packages-grid::-webkit-scrollbar,
+  .vehicle-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .experience-card,
+  .tour-package-card,
+  .vehicle-card {
+    flex: 0 0 82vw;
+    min-width: 0;
+    scroll-snap-align: center;
+    transform: rotateY(-2deg);
+  }
+
+  .experience-card:nth-child(even),
+  .tour-package-card:nth-child(even),
+  .vehicle-card:nth-child(even) {
+    transform: rotateY(2deg);
+  }
+
+  .experience-card:nth-child(3),
+  .tour-package-card:nth-child(2),
+  .vehicle-card:nth-child(3) {
+    transform: translateZ(22px);
+  }
+
+  .experience-card .experience-card-visual {
+    aspect-ratio: 1.7;
+  }
+
+  .tour-package-card .tour-card-visual,
+  .vehicle-card .vehicle-card-visual {
+    aspect-ratio: 1.7;
+  }
+
+  .popular-treks-grid {
+    display: flex;
+    gap: 1rem;
+    margin-left: -0.5rem;
+    margin-right: -0.5rem;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    padding: 0.5rem 0.5rem 1rem;
+    perspective: 1000px;
+    scroll-padding-inline: 1rem;
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+  }
+
+  .popular-treks-grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .popular-trek-card {
+    flex: 0 0 82vw;
+    min-width: 0;
+    scroll-snap-align: center;
+    transform: rotateY(-2deg) translateZ(0);
+    transform-origin: center;
+  }
+
+  .popular-trek-card:nth-child(even) {
+    transform: rotateY(2deg) translateZ(0);
+  }
+
+  .popular-trek-card:nth-child(3) {
+    transform: translateZ(22px);
+  }
+
+  .popular-trek-card .trek-card-media {
+    aspect-ratio: 1.7;
+  }
+
+  .main-content-background {
+    background-position: 52% 0;
+    background-size: auto 100%;
+  }
+
+  .main-content-background > section + section::before {
+    height: 1.2rem;
+    top: -0.58rem;
+  }
+
+  .hero-section {
+    background: #17483d;
+  }
+
+  .hero-image-layer {
+    height: 54%;
+    inset: auto 0 0;
+  }
+
+  .hero-overlay {
+    background: linear-gradient(180deg, #17483d 0%, rgba(23, 72, 61, 0.94) 46%, rgba(15, 48, 42, 0.62) 100%);
+  }
 }

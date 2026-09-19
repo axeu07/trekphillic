@@ -1,0 +1,60 @@
+TrekPhillic — Short Architecture Brief
+                    TREKPHILLIC
+                         │
+          ┌──────────────┴──────────────┐
+          │                             │
+     PUBLIC WEBSITE                SUPERADMIN
+     Next.js + TS                  Dashboard
+          │                             │
+          │                       Add / Edit / Delete
+          │                       Treks / Tours / Vehicles
+          │                       Manage Enquiries
+          │                       Manage Testimonials
+          │                             │
+          └──────────────┬──────────────┘
+                         ↓
+                    FIREBASE
+              ┌──────────┼──────────┐
+              │          │          │
+          Firestore     Auth      Security
+              │
+       ┌──────┼─────────┬─────────┐
+       ↓      ↓         ↓         ↓
+     Treks   Tours   Vehicles  Enquiries
+
+                         +
+                    CLOUDINARY
+                         │
+              ┌──────────┼──────────┐
+              ↓          ↓          ↓
+          Trek Images  Galleries  Vehicle Photos
+Core flow
+
+SuperAdmin → Firebase → Public Website
+
+You add/edit a trek once from the SuperAdmin panel, and the public website automatically displays the updated information.
+
+Customer flow
+Visitor
+ ↓
+Explore Trek/Tour/Vehicle
+ ↓
+View Complete Details
+ ↓
+Send Enquiry
+ ↓
+Firebase stores enquiry
+ ↓
+You receive notification
+ ↓
+Call / WhatsApp customer
+ ↓
+Manually finalize booking
+Tech stack
+
+Frontend: Next.js + TypeScript + Tailwind
+Database: Firebase Firestore
+Admin Login: Firebase Authentication
+Images: Cloudinary
+Hosting: Vercel
+Booking: Enquiry-based, no direct online booking initially
