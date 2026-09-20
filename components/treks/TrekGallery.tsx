@@ -1,0 +1,6 @@
+import Image from "next/image";
+import type { Trek } from "@/types/trek";
+
+export function TrekGallery({ trek }: { trek: Trek }) {
+  return <section className="mx-auto max-w-7xl px-6 py-20 lg:px-10 lg:py-28"><div className="mb-10 flex items-end justify-between gap-6"><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Field notes</p><h2 className="mt-4 font-[family-name:var(--font-poppins)] text-4xl font-semibold tracking-[-0.06em] text-forest-deep">A few views along the way.</h2></div><p className="hidden text-xs uppercase tracking-[0.14em] text-foreground/50 sm:block">{trek.gallery.length} images</p></div><div className="grid auto-rows-[10rem] grid-cols-2 gap-3 sm:auto-rows-[14rem] sm:grid-cols-4">{trek.gallery.map((image, index) => <div className={`relative overflow-hidden ${index === 0 ? "col-span-2 row-span-2" : index === 1 ? "row-span-2" : ""}`} key={`${image}-${index}`}><Image alt={`${trek.name} view ${index + 1}`} className="object-cover transition duration-700 hover:scale-105" fill sizes="(min-width: 640px) 25vw, 50vw" src={image} /></div>)}</div></section>;
+}

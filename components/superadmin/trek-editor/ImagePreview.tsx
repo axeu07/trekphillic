@@ -1,0 +1,14 @@
+import Image from "next/image";
+import type { LocalImagePreview } from "@/lib/media/upload";
+
+export function ImagePreview({ src, alt, local, name, size, status, error, onRemove, onChange, onRetry, removeLabel = "Remove image" }: { src: string; alt: string; local?: boolean; name?: string; size?: number; status?: "uploading" | "uploaded" | "failed"; error?: string; onRemove: () => void; onChange?: () => void; onRetry?: () => void; removeLabel?: string }) {
+  return <div className="border border-border bg-background p-2"><div className="relative aspect-[1.8] overflow-hidden bg-surface-muted"><Image alt={alt} className="object-cover" fill sizes="(min-width: 1024px) 32rem, 100vw" src={src} unoptimized /></div><div className="flex flex-col gap-3 px-1 pb-1 pt-3 sm:flex-row sm:items-center sm:justify-between"><div className="min-w-0"><p className="truncate text-sm font-semibold text-forest-deep">{name ?? src}</p>{size !== undefined ? <p className="text-xs text-foreground/55">{formatFileSize(size)}</p> : null}{status === "uploading" ? <p className="mt-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-teal">Uploading...</p> : status === "failed" ? <p className="mt-1 text-xs text-[#8a4d1e]">{error ?? "Upload failed."}</p> : local ? <p className="mt-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-teal">Local preview - not saved</p> : <p className="mt-1 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-foreground/45">Persisted image URL</p>}</div><div className="flex shrink-0 flex-wrap gap-3">{status === "failed" && onRetry ? <button className="text-sm font-semibold text-teal underline underline-offset-4" onClick={onRetry} type="button">Retry</button> : null}{onChange ? <button className="text-sm font-semibold text-teal underline underline-offset-4" onClick={onChange} type="button">Change image</button> : null}<button aria-label={removeLabel} className="text-sm font-semibold text-[#8a4d1e] underline underline-offset-4" onClick={onRemove} type="button">Remove</button></div></div></div>;
+}
+
+export function LocalPreviewImage({ preview, alt, status, error, onRemove, onChange, onRetry, removeLabel }: { preview: LocalImagePreview; alt: string; status?: "uploading" | "failed"; error?: string; onRemove: () => void; onChange?: () => void; onRetry?: () => void; removeLabel?: string }) {
+  return <ImagePreview alt={alt} error={error} local name={preview.name} onChange={onChange} onRemove={onRemove} onRetry={onRetry} removeLabel={removeLabel} size={preview.size} src={preview.url} status={status} />;
+}
+
+function formatFileSize(bytes: number) {
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}

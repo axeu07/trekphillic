@@ -1,13 +1,6 @@
 export type Category = "trek" | "tour" | "vehicle";
 
-export interface Trek {
-  slug: string;
-  name: string;
-  region?: string;
-  season?: string;
-  image?: string;
-  summary?: string;
-}
+export type { Trek, TrekDifficulty } from "./trek";
 
 export interface TourPackage {
   slug: string;

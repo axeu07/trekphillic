@@ -1,0 +1,5 @@
+import Link from "next/link";
+
+export function TrekAdminHeader() {
+  return <header className="flex flex-col justify-between gap-6 border-b border-foreground/15 pb-8 sm:flex-row sm:items-end"><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">SuperAdmin / Content</p><h1 className="mt-3 font-[family-name:var(--font-poppins)] text-4xl font-semibold tracking-[-0.06em] text-forest-deep sm:text-5xl">Treks</h1><p className="mt-3 text-sm text-foreground/65">Manage your Himalayan journeys.</p></div><Link className="inline-flex min-h-11 items-center justify-center gap-2 self-start bg-forest px-5 text-sm font-semibold text-white transition-colors hover:bg-forest-deep sm:self-auto" href="/superadmin/treks/new"><span aria-hidden="true" className="text-lg leading-none">+</span> Add trek</Link></header>;
+}

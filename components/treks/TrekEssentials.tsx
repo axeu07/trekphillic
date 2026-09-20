@@ -1,0 +1,5 @@
+import type { Trek } from "@/types/trek";
+
+export function TrekEssentials({ trek }: { trek: Trek }) {
+  return <section className="bg-surface-muted py-20 lg:py-24"><div className="mx-auto max-w-7xl px-6 lg:px-10"><div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]"><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Before you go</p><h2 className="mt-4 max-w-xs font-[family-name:var(--font-poppins)] text-4xl font-semibold leading-none tracking-[-0.06em] text-forest-deep">Essential information.</h2></div><div className="grid border-t border-foreground/20 sm:grid-cols-2">{trek.essentials.map((item) => <article className="border-b border-foreground/15 py-5 sm:pr-8" key={item.label}><h3 className="text-sm font-semibold uppercase tracking-[0.12em] text-forest-deep">{item.label}</h3><p className="mt-2 text-sm leading-6 text-foreground/68">{item.detail}</p></article>)}</div></div></div></section>;
+}

@@ -1,0 +1,6 @@
+import { EditorSection } from "@/components/superadmin/trek-editor/EditorSection";
+import type { TrekEditorState } from "@/components/superadmin/trek-editor/types";
+
+export function TrekPublishing({ state, onChange }: { state: TrekEditorState; onChange: <K extends keyof TrekEditorState>(key: K, value: TrekEditorState[K]) => void }) {
+  return <EditorSection eyebrow="07 / Visibility" title="Publishing"><div className="grid gap-5 sm:grid-cols-2"><fieldset><legend className="text-xs font-semibold uppercase tracking-[0.14em] text-foreground/60">Status</legend><div className="mt-3 space-y-3"><label className="flex items-center gap-3 text-sm"><input checked={state.status === "draft"} name="trek-status" onChange={() => onChange("status", "draft")} type="radio" />Draft</label><label className="flex items-center gap-3 text-sm"><input checked={state.status === "published"} name="trek-status" onChange={() => onChange("status", "published")} type="radio" />Published</label></div></fieldset><label className="flex items-center gap-3 self-start pt-6 text-sm"><input checked={state.featured} onChange={(event) => onChange("featured", event.target.checked)} type="checkbox" />Featured trek</label></div></EditorSection>;
+}

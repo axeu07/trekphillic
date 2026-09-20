@@ -1,0 +1,5 @@
+import Link from "next/link";
+
+export function TrekCTA() {
+  return <section className="bg-forest-deep px-6 py-20 text-white lg:px-10 lg:py-28" id="plan"><div className="mx-auto flex max-w-7xl flex-col justify-between gap-10 sm:flex-row sm:items-end"><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-sage">Your next way out</p><h2 className="mt-4 max-w-2xl font-[family-name:var(--font-poppins)] text-5xl font-semibold leading-[0.95] tracking-[-0.06em] sm:text-7xl">Ready to leave the map?</h2><p className="mt-6 max-w-md text-sm leading-6 text-white/70">Tell us what you are looking for and we will help shape the right journey.</p></div><Link className="inline-flex min-h-11 shrink-0 items-center justify-center bg-sage px-5 text-sm font-semibold text-forest-deep transition-colors hover:bg-white" href="/enquiry">Plan this journey <span aria-hidden="true" className="ml-3 text-lg">+</span></Link></div></section>;
+}

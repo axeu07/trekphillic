@@ -1,0 +1,6 @@
+import Image from "next/image";
+import type { Trek } from "@/types/trek";
+
+export function TrekStory({ trek }: { trek: Trek }) {
+  return <section className="bg-surface-muted py-20 lg:py-28"><div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:px-10"><div className="relative min-h-[26rem] overflow-hidden sm:min-h-[34rem]"><Image alt={trek.name} className="object-cover transition duration-700 hover:scale-105" fill sizes="(min-width: 1024px) 42vw, 100vw" src={trek.gallery[0] ?? trek.coverImage} /></div><div className="lg:pl-8"><p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">The feeling of it</p><h2 className="mt-4 max-w-xl font-[family-name:var(--font-poppins)] text-4xl font-semibold leading-[1.02] tracking-[-0.06em] text-forest-deep sm:text-6xl">{trek.story.heading}</h2><div className="mt-8 max-w-lg space-y-5 text-base leading-7 text-foreground/72">{trek.story.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div></div></div></section>;
+}

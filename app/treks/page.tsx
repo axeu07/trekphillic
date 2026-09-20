@@ -1,9 +1,9 @@
 import { TrekCatalogue } from "@/components/treks/TrekCatalogue";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { treks } from "@/data/treks";
+import { getPublishedTreks } from "@/lib/treks/repository";
 
 export const metadata = { title: "Treks" };
 
-export default function TreksPage() {
-  return <main className="trek-listing-page"><div className="mx-auto max-w-6xl px-6 py-16 lg:px-10 lg:py-20"><div className="max-w-2xl"><SectionHeading eyebrow="TREKPHILLIC TREKS" title="Find Your Trail" description="Explore Himalayan treks from peaceful valley walks to high-altitude adventures." /></div><div className="mt-10"><TrekCatalogue treks={treks} /></div><section className="mt-16 flex flex-col justify-between gap-6 rounded-3xl bg-forest px-6 py-8 text-white sm:flex-row sm:items-center sm:px-8"><div><h2 className="text-2xl font-semibold tracking-[-0.03em]">Not sure which trek is right for you?</h2><p className="mt-2 max-w-xl text-sm leading-6 text-white/75">Tell us your dates, group size and what kind of experience you&apos;re looking for.</p></div><a className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full bg-white px-5 text-sm font-semibold text-black transition-colors hover:bg-sage" href="/enquiry">Plan My Trek <span aria-hidden="true" className="ml-2">→</span></a></section></div></main>;
+export default async function TreksPage() {
+  const treks = await getPublishedTreks();
+  return <main className="trek-listing-page"><div className="mx-auto max-w-7xl px-6 py-16 lg:px-10 lg:py-24"><header className="grid gap-8 lg:grid-cols-[1fr_0.7fr] lg:items-end"><div><p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal">Explore the Himalayas</p><h1 className="mt-5 max-w-3xl font-[family-name:var(--font-poppins)] text-5xl font-semibold leading-[0.98] tracking-[-0.06em] text-forest-deep sm:text-7xl">Find a trail that stays with you.</h1></div><div className="lg:pb-1"><p className="max-w-md text-base leading-7 text-foreground/70">A considered collection of Himalayan walks, high passes, and quiet seasonal escapes.</p><p className="mt-6 text-xs font-semibold uppercase tracking-[0.16em] text-foreground/55"><span className="text-2xl tracking-[-0.04em] text-forest-deep">{treks.length}</span> published trails</p></div></header><div className="mt-16"><TrekCatalogue treks={treks} /></div></div></main>;
 }

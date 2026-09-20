@@ -1,4 +1,45 @@
+# TrekPhillic
+
+A modern travel website focused on Himalayan treks, tours, and mountain experiences.
+
+## Features
+
+- 🏔️ Himalayan trek discovery
+- 🗺️ Trek and tour exploration
+- 📱 Responsive design
+- 🎨 Modern travel-focused UI
+- 📝 Enquiry-based booking
+- 🔐 Admin/CMS functionality
+- 🔥 Firebase-powered data management
+- ☁️ Cloud-based image management
+
+## Tech Stack
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+- Firebase
+- Cloudinary
+
+## Project Structure
+
+app/
+components/
+lib/
+public/
+firebase/
+...
+
+## Getting Started
+
+```bash
+npm install
+npm run dev
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
 
 ## Getting Started
 
