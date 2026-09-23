@@ -1,5 +1,6 @@
 import type { Trek } from "@/types/trek";
 import { mockTrekRepository } from "@/lib/treks/mock-repository";
+import { firestoreTrekRepository } from "@/lib/treks/firestore-repository";
 
 export interface TrekRepository {
   getTreks(): Promise<Trek[]>;
@@ -24,4 +25,6 @@ export async function getFeaturedTreks() {
   return trekRepository.getFeaturedTreks();
 }
 
-export const trekRepository: TrekRepository = mockTrekRepository;
+export const trekRepository: TrekRepository = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
+  ? firestoreTrekRepository
+  : mockTrekRepository;

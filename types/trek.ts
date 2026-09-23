@@ -19,6 +19,11 @@ export interface TrekExperience {
   image: string;
 }
 
+export interface TrekMedia {
+  coverPublicId?: string;
+  galleryPublicIds?: string[];
+}
+
 export interface TrekEssential {
   label: string;
   detail: string;
@@ -34,12 +39,14 @@ export interface Trek {
   altitude: string;
   distance: string;
   duration: string;
+  price?: string;
   difficulty: TrekDifficulty;
   bestSeason: string;
   startingPoint: string;
   endingPoint: string;
   coverImage: string;
   gallery: string[];
+  media?: TrekMedia;
   story: TrekStory;
   highlights?: string[];
   itinerary: TrekItineraryDay[];

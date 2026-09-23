@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { createLocalImagePreview, imageAccept, revokeLocalImagePreview, uploadImage, validateImageFile, type LocalImagePreview } from "@/lib/media/upload";
+import { createLocalImagePreview, imageAccept, revokeLocalImagePreview, uploadImage, validateImageFile, type LocalImagePreview, type UploadedImage } from "@/lib/media/upload";
 import { ImagePreview, LocalPreviewImage } from "@/components/superadmin/trek-editor/ImagePreview";
 
-export function ImageUploader({ value, slug, error, onChange, onPendingFileChange }: { value: string; slug: string; error?: string; onChange: (value: string) => void; onPendingFileChange: (hasFile: boolean) => void }) {
+export function ImageUploader({ value, slug, error, onChange, onPendingFileChange }: { value: string; slug: string; error?: string; onChange: (value: string) => void; onPendingFileChange: (hasFile: boolean, upload?: () => Promise<UploadedImage>) => void }) {
   const [preview, setPreview] = useState<LocalImagePreview>();
   const [pendingFile, setPendingFile] = useState<File>();
   const [uploading, setUploading] = useState(false);
@@ -19,18 +19,21 @@ export function ImageUploader({ value, slug, error, onChange, onPendingFileChang
     setUploading(true);
     setFailed(false);
     try {
-      const secureUrl = await uploadImage(file, { kind: "cover", slug });
+      const result = await uploadImage(file, { kind: "cover", slug });
       if (version !== uploadVersion.current) return;
       setPreview(undefined);
       setPendingFile(undefined);
       setUploading(false);
       onPendingFileChange(false);
-      onChange(secureUrl);
+      onPendingFileChange(false);
+      onChange(result.secureUrl);
+      return result;
     } catch (error) {
       setUploading(false);
       setFailed(true);
       setUploadError(error instanceof Error ? error.message : "The image could not be uploaded. Please try again.");
       onPendingFileChange(true);
+      throw error;
     }
   };
   const selectFile = (file?: File) => {
@@ -40,9 +43,12 @@ export function ImageUploader({ value, slug, error, onChange, onPendingFileChang
     setUploadError("");
     setPreview(createLocalImagePreview(file));
     setPendingFile(file);
-    onPendingFileChange(true);
     const version = ++uploadVersion.current;
-    void uploadSelectedFile(file, version);
+    onPendingFileChange(true, async () => {
+      const result = await uploadSelectedFile(file, version);
+      if (!result) throw new Error("The cover image selection changed before upload.");
+      return result;
+    });
   };
   const remove = () => { uploadVersion.current += 1; setPreview(undefined); setPendingFile(undefined); setUploading(false); setFailed(false); setUploadError(""); onPendingFileChange(false); onChange(""); };
   const choose = () => inputRef.current?.click();

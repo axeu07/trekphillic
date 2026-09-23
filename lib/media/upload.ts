@@ -2,8 +2,13 @@ export const imageAccept = "image/jpeg,image/png,image/webp";
 export const maxImageSizeBytes = 5 * 1024 * 1024;
 
 export interface ImageUploadProvider {
-  uploadImage(file: File, options: UploadImageOptions): Promise<string>;
-  uploadImages(files: File[], options: UploadImageOptions): Promise<string[]>;
+  uploadImage(file: File, options: UploadImageOptions): Promise<UploadedImage>;
+  uploadImages(files: File[], options: UploadImageOptions): Promise<UploadedImage[]>;
+}
+
+export interface UploadedImage {
+  secureUrl: string;
+  publicId: string;
 }
 
 export interface UploadImageOptions {
@@ -41,6 +46,7 @@ export function revokeLocalImagePreview(preview: LocalImagePreview) {
 
 interface UploadResponse {
   secureUrl?: string;
+  publicId?: string;
   error?: string;
 }
 
@@ -52,8 +58,8 @@ export async function uploadImage(file: File, options: UploadImageOptions) {
   const response = await fetch("/api/media/upload", { body: formData, method: "POST", signal: options.signal });
   let payload: UploadResponse = {};
   try { payload = await response.json(); } catch { payload = {}; }
-  if (!response.ok || !payload.secureUrl) throw new Error(payload.error ?? "The image could not be uploaded.");
-  return payload.secureUrl;
+  if (!response.ok || !payload.secureUrl || !payload.publicId) throw new Error(payload.error ?? "The image could not be uploaded.");
+  return { publicId: payload.publicId, secureUrl: payload.secureUrl };
 }
 
 export async function uploadImages(files: File[], options: UploadImageOptions) {

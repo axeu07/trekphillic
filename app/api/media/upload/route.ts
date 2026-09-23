@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     if (validationError) return NextResponse.json({ error: validationError }, { status: 400 });
 
     const result = await uploadImageToCloudinary(fileEntry, `trekphillic/treks/${slugEntry}/${kindEntry}`);
-    return NextResponse.json({ secureUrl: result.secure_url });
+    return NextResponse.json({ publicId: result.public_id, secureUrl: result.secure_url });
   } catch (error) {
     if (error instanceof CloudinaryConfigurationError) return NextResponse.json({ error: "Cloudinary uploads are not configured yet." }, { status: 503 });
     return NextResponse.json({ error: "The image could not be uploaded. Please try again." }, { status: 502 });

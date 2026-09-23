@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { TrekBasicInfo } from "@/components/superadmin/trek-editor/TrekBasicInfo";
 import { TrekContent } from "@/components/superadmin/trek-editor/TrekContent";
 import { TrekEssentials } from "@/components/superadmin/trek-editor/TrekEssentials";
@@ -10,8 +11,9 @@ import { TrekMedia } from "@/components/superadmin/trek-editor/TrekMedia";
 import { TrekPublishing } from "@/components/superadmin/trek-editor/TrekPublishing";
 import { TrekSEO } from "@/components/superadmin/trek-editor/TrekSEO";
 import { TrekTripDetails } from "@/components/superadmin/trek-editor/TrekTripDetails";
+import { firestore } from "@/lib/firebase";
 import type { Trek, TrekEssential } from "@/types/trek";
-import type { TrekEditorErrors, TrekEditorProps, TrekEditorState, TrekEditorStatus } from "@/components/superadmin/trek-editor/types";
+import type { PendingImageUpload, TrekEditorErrors, TrekEditorProps, TrekEditorState, TrekEditorStatus } from "@/components/superadmin/trek-editor/types";
 
 const essentialLabels = ["Fitness", "Weather", "Accommodation", "Food", "Transport"] as const;
 const defaultEssentials: TrekEssential[] = essentialLabels.map((label) => ({ label, detail: "" }));
@@ -30,6 +32,7 @@ function editorStateFromTrek(trek?: Trek): TrekEditorState {
     startingPoint: trek?.startingPoint ?? "",
     endingPoint: trek?.endingPoint ?? "",
     duration: trek?.duration ?? "",
+    price: trek?.price ?? "",
     distance: trek?.distance ?? "",
     altitude: trek?.altitude ?? "",
     difficulty: trek?.difficulty ?? "moderate",
@@ -64,6 +67,7 @@ function buildTrek(state: TrekEditorState, initialData: Trek | undefined, status
     altitude: state.altitude.trim(),
     distance: state.distance.trim(),
     duration: state.duration.trim(),
+    price: state.price.trim() || undefined,
     difficulty: state.difficulty,
     bestSeason: state.bestSeason.trim(),
     coverImage: state.coverImage.trim(),
@@ -87,8 +91,12 @@ export function TrekEditor({ mode, initialData, onSave }: TrekEditorProps) {
   const [errors, setErrors] = useState<TrekEditorErrors>({});
   const [slugManuallyEdited, setSlugManuallyEdited] = useState(mode === "edit");
   const [saveMessage, setSaveMessage] = useState("");
-  const [hasPendingCover, setHasPendingCover] = useState(false);
-  const [hasPendingGallery, setHasPendingGallery] = useState(false);
+  const [hasPendingCover, setHasPendingCoverState] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [pendingCoverUpload, setPendingCoverUpload] = useState<PendingImageUpload>();
+  const [pendingGalleryUpload, setPendingGalleryUpload] = useState<PendingImageUpload>();
+  const setHasPendingCover = (hasFile: boolean, upload?: PendingImageUpload) => { setHasPendingCoverState(hasFile); setPendingCoverUpload(upload ? () => upload : undefined); };
+  const setHasPendingGallery = (_hasFiles: boolean, upload?: PendingImageUpload) => { setPendingGalleryUpload(upload ? () => upload : undefined); };
 
   const update = <K extends keyof TrekEditorState>(key: K, value: TrekEditorState[K]) => setState((current) => ({ ...current, [key]: value }));
   const updateName = (name: string) => setState((current) => ({ ...current, name, slug: slugManuallyEdited ? current.slug : slugify(name) }));
@@ -105,11 +113,31 @@ export function TrekEditor({ mode, initialData, onSave }: TrekEditorProps) {
   };
 
   const handleSave = async (status: TrekEditorStatus) => {
-    if (!validate()) { setSaveMessage("Complete the highlighted fields before saving."); return; }
-    const payload = buildTrek(state, initialData, status);
-    update("status", status);
-    if (onSave) await onSave(payload);
-    setSaveMessage(`${status === "published" ? "Publish" : "Save draft"} payload prepared locally. Persistence is not connected yet.${hasPendingCover || hasPendingGallery ? " Local image previews are not saved." : ""}`);
+    if (isSaving || !validate()) { if (!isSaving) setSaveMessage("Complete the highlighted fields before saving."); return; }
+    setIsSaving(true);
+    setSaveMessage(status === "published" ? "Uploading images and publishing..." : "Uploading images and saving draft...");
+    try {
+      const uploadedCover = pendingCoverUpload ? await pendingCoverUpload() : undefined;
+      const uploadedGallery = pendingGalleryUpload ? await pendingGalleryUpload() : undefined;
+      const payload = buildTrek(state, initialData, status);
+      if (uploadedCover && !Array.isArray(uploadedCover)) payload.coverImage = uploadedCover.secureUrl;
+      if (uploadedGallery && Array.isArray(uploadedGallery)) payload.gallery = [...state.gallery, ...uploadedGallery.map((image) => image.secureUrl)];
+      payload.media = {
+        coverPublicId: uploadedCover && !Array.isArray(uploadedCover) ? uploadedCover.publicId : initialData?.media?.coverPublicId,
+        galleryPublicIds: uploadedGallery && Array.isArray(uploadedGallery) ? [...(initialData?.media?.galleryPublicIds ?? []), ...uploadedGallery.map((image) => image.publicId)] : initialData?.media?.galleryPublicIds,
+      };
+      const collectionName = status === "published" ? "treks" : "trekDrafts";
+      if (status === "published" && mode === "create" && (await getDoc(doc(firestore, "treks", payload.slug))).exists() && !window.confirm(`A trek with the slug "${payload.slug}" already exists. Overwrite it?`)) throw new Error("Publish cancelled.");
+      const firestorePayload = JSON.parse(JSON.stringify(payload)) as Trek;
+      await setDoc(doc(firestore, collectionName, payload.slug), firestorePayload);
+      update("status", status);
+      if (onSave) await onSave(payload);
+      setSaveMessage(status === "published" ? "Trek published successfully." : "Draft saved successfully.");
+    } catch (error) {
+      setSaveMessage(error instanceof Error ? `${status === "published" ? "Publish" : "Save draft"} failed: ${error.message}` : `${status === "published" ? "Publish" : "Save draft"} failed. Please check your connection and try again.`);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return <main className="min-h-screen bg-background"><div className="mx-auto max-w-7xl px-6 py-12 lg:px-10 lg:py-16"><header className="flex flex-col justify-between gap-5 border-b border-foreground/15 pb-8 sm:flex-row sm:items-end"><div><Link className="text-xs font-semibold uppercase tracking-[0.18em] text-teal hover:text-forest" href="/superadmin/treks">SuperAdmin / Treks</Link><h1 className="mt-3 font-[family-name:var(--font-poppins)] text-4xl font-semibold tracking-[-0.06em] text-forest-deep sm:text-5xl">{mode === "create" ? "Add trek" : `Edit ${state.name || "trek"}`}</h1><p className="mt-3 text-sm text-foreground/65">Build the story, route, and practical details for this journey.</p></div><p className="text-xs uppercase tracking-[0.14em] text-foreground/45">{mode === "create" ? "New record" : "Editing record"}</p></header><form className="mt-10 grid items-start gap-12 lg:grid-cols-[minmax(0,1fr)_18rem]" onSubmit={(event) => event.preventDefault()}><div><TrekBasicInfo errors={errors} onChange={updateBasicInfo} state={state} /><TrekTripDetails onChange={update} state={state} /><TrekContent onChange={update} state={state} /><TrekItinerary onChange={update} state={state} /><TrekEssentials onChange={update} state={state} /><TrekMedia errors={errors} onChange={update} onPendingCoverChange={setHasPendingCover} onPendingGalleryChange={setHasPendingGallery} state={state} /><TrekPublishing onChange={update} state={state} /><TrekSEO onChange={update} state={state} /></div><aside className="lg:sticky lg:top-6"><div className="border border-foreground/15 bg-surface p-5"><p className="text-xs font-semibold uppercase tracking-[0.18em] text-teal">Publish</p><h2 className="mt-2 text-xl font-semibold tracking-[-0.04em] text-forest-deep">{state.name || "Untitled trek"}</h2><p className="mt-2 text-sm leading-6 text-foreground/60">{state.location || "No location yet"} {state.duration ? ` / ${state.duration}` : ""}</p><div className="mt-5 border-t border-border pt-4 text-xs leading-5 text-foreground/55"><p>Status: <strong className="text-foreground">{state.status === "published" ? "Published" : "Draft"}</strong></p><p>Featured: <strong className="text-foreground">{state.featured ? "Yes" : "No"}</strong></p></div>{errors.form ? <p className="mt-4 text-xs text-[#8a4d1e]">{errors.form}</p> : null}{saveMessage ? <p aria-live="polite" className="mt-4 border-l-2 border-teal pl-3 text-xs leading-5 text-foreground/65">{saveMessage}</p> : null}<div className="mt-6 grid gap-2"><button className="min-h-11 border border-border px-4 text-sm font-semibold text-forest transition-colors hover:border-forest" onClick={() => handleSave("draft")} type="button">Save draft</button><button className="min-h-11 bg-forest px-4 text-sm font-semibold text-white transition-colors hover:bg-forest-deep" onClick={() => handleSave("published")} type="button">Publish trek</button></div></div></aside></form></div></main>;

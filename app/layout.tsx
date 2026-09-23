@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Poppins } from "next/font/google";
+import { FirebaseAnalytics } from "@/components/FirebaseAnalytics";
 import { SiteShell } from "@/components/layout/SiteShell";
 import "./globals.css";
 
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <FirebaseAnalytics />
         <SiteShell>{children}</SiteShell>
       </body>
     </html>
